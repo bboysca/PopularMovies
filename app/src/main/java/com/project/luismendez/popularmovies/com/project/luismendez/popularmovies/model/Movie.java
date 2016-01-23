@@ -4,37 +4,45 @@ import java.util.Date;
 
 public class Movie {
 
-    private String title;
-    private String imageUrl;
-    private String overview;
-    private double rating;
-    private Date releaseDate;
+    private String mTitle;
+    private String mImageUrl;
+    private String mOverview;
+    private double mRating;
+    private Date mReleaseDate;
 
     public Movie(String title, String imageUrl, String overview, double rating, Date releaseDate) {
-        this.title = title;
-        this.imageUrl = imageUrl;
-        this.overview = overview;
-        this.rating = rating;
-        this.releaseDate = releaseDate;
+        this.mTitle = title;
+        this.mImageUrl = imageUrl;
+        this.mOverview = overview;
+        this.mRating = rating;
+        this.mReleaseDate = releaseDate;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public String getImageUrl() {
-        return imageUrl;
+        return mImageUrl;
     }
 
     public String getOverview() {
-        return overview;
+        return mOverview;
     }
 
     public double getRating() {
-        return rating;
+        return mRating;
     }
 
     public Date getReleaseDate() {
-        return releaseDate;
+        return mReleaseDate;
+    }
+
+    public String toString() {
+        return "title: " + mTitle + " " +
+                "imageUrl: " + mImageUrl + " " +
+                "overview: " + mOverview + " " +
+                "rating: " + mRating + " " +
+                "releaseDate: " + mReleaseDate;
     }
 }

@@ -10,20 +10,23 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-public class PosterAdapter extends ArrayAdapter<Integer> {
+import java.util.ArrayList;
+
+public class PosterAdapter extends ArrayAdapter<String> {
+
     private Context mContext;
     private int mLayoutId;
-    private Integer[] urls;
+    private ArrayList<String> mPosterUrls;
 
-    public PosterAdapter(Context context, int layoutId, Integer[] urls) {
-        super(context, layoutId, urls);
+    public PosterAdapter(Context context, int layoutId, ArrayList<String> posterUrls) {
+        super(context, layoutId, posterUrls);
         this.mContext = context;
         this.mLayoutId = layoutId;
-        this.urls = urls;
+        this.mPosterUrls = posterUrls;
     }
 
     public int getCount() {
-        return urls.length;
+        return mPosterUrls.size();
     }
 
     // create a new ImageView for each item referenced by the Adapter
@@ -50,8 +53,9 @@ public class PosterAdapter extends ArrayAdapter<Integer> {
         } else {
             imageView2 = (ImageView) convertView;
         }
+
         Picasso.with(mContext)
-                .load(urls[position])
+                .load(mPosterUrls.get(position))
                 .placeholder(R.mipmap.ic_launcher).resize(600,600).centerCrop()
                 .into(imageView2);
 
