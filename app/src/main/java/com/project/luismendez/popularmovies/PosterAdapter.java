@@ -1,6 +1,7 @@
 package com.project.luismendez.popularmovies;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.annotation.MainThread;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,11 +55,23 @@ public class PosterAdapter extends ArrayAdapter<String> {
             imageView2 = (ImageView) convertView;
         }
 
+        int columnWidth = mContext.getResources().getDisplayMetrics().widthPixels;
+
+        int posterWidth;
+        int posterHeight;
+        if (Configuration.ORIENTATION_PORTRAIT == mContext.getResources().getConfiguration().orientation) {
+            posterWidth = columnWidth / 2; //2 columns portrait, 3 columns landscape
+            posterHeight = (3 * columnWidth / 4); //1 * 1.5 poster aspect ratio
+        } else {
+            posterWidth = columnWidth / 3;
+            posterHeight = columnWidth / 2;
+        }
+
         Picasso.with(mContext)
                 .load(mPosterUrls.get(position))
-                .placeholder(R.mipmap.ic_launcher).resize(600,600).centerCrop()
+                .centerCrop().resize(posterWidth, posterHeight)
+                .placeholder(R.mipmap.ic_launcher)
                 .into(imageView2);
-
         return imageView2;
     }
 }
