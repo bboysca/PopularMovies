@@ -1,5 +1,6 @@
 package com.project.luismendez.popularmovies;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,11 +36,11 @@ import java.util.Date;
  */
 public class MovieGridActivityFragment extends Fragment {
 
-    private static final String DISCOVER_MOVIES_URL = "http://api.themoviedb.org/3/discover/movie";
+    public static final String MOVIE_PARCEL = "movieParcel";
 
+    private static final String DISCOVER_MOVIES_URL = "http://api.themoviedb.org/3/discover/movie";
     //TODO Find some way to change w185 depending on device size
     private final static String MOVIEDB_IMAGE_PATH = "http://image.tmdb.org/t/p/w185/";
-
     private static final String MOVIE_GRID_TAG = "MovieGrid";
 
     //TODO REMOVE
@@ -65,7 +66,7 @@ public class MovieGridActivityFragment extends Fragment {
                 MOVIEDB_IMAGE_PATH + "nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg"
         };
 
-        ArrayList<String> movieList = new ArrayList<String>();
+        ArrayList<Movie> movieList = new ArrayList<Movie>();
 
         mPosterAdapter = new PosterAdapter(getActivity(), R.layout.fragment_movies, movieList);
         gridview.setAdapter(mPosterAdapter);
@@ -73,7 +74,9 @@ public class MovieGridActivityFragment extends Fragment {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Toast.makeText(getActivity(), "" + position, Toast.LENGTH_SHORT).show();
+                Intent detailIntent = new Intent(getActivity(), MovieDetailsActivity.class)
+                        .putExtra(MOVIE_PARCEL, (Movie) parent.getItemAtPosition(position));
+                startActivity(detailIntent);
             }
         });
         return rootView;
@@ -98,16 +101,8 @@ public class MovieGridActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(Movie[] result) {
             mPosterAdapter.clear();
-            mPosterAdapter.addAll(Arrays.asList(posterUrlBuilder(result)));
+            mPosterAdapter.addAll(Arrays.asList(result));
             mPosterAdapter.notifyDataSetChanged();
-        }
-
-        private String[] posterUrlBuilder(Movie[] movies) {
-            String[] posterUrls = new String[movies.length];
-            for (int i = 0; i < movies.length; i++) {
-                posterUrls[i] = MOVIEDB_IMAGE_PATH + movies[i].getImageUrl();
-            }
-            return posterUrls;
         }
 
         private Movie[] downloadUrl(String url) {
@@ -190,13 +185,14 @@ public class MovieGridActivityFragment extends Fragment {
             Movie[] movies = new Movie[movieResultsLength];
             for (int i = 0; i < movieResults.length(); i++) {
                 JSONObject movieResult = movieResults.getJSONObject(i);
+                String id = movieResult.getString("id");
                 String title = movieResult.getString("title");
                 String posterUrl = movieResult.getString("poster_path");
                 String overview = movieResult.getString("overview");
                 double rating = movieResult.getDouble("vote_average");
                 String releaseDateStr = movieResult.getString("release_date");
                 Date releaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(releaseDateStr);
-                movies[i] = new Movie(title, posterUrl, overview, rating, releaseDate);
+                movies[i] = new Movie(id, title, posterUrl, overview, rating, releaseDate);
             }
             return movies;
         }
