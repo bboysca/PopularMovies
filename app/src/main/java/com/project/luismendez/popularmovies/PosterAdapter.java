@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class PosterAdapter extends ArrayAdapter<Movie> {
 
-    private final static String MOVIEDB_IMAGE_PATH = "http://image.tmdb.org/t/p/w185/";
+    public final static String MOVIEDB_IMAGE_PATH = "http://image.tmdb.org/t/p/w185/";
 
     private Context mContext;
     private int mLayoutId;

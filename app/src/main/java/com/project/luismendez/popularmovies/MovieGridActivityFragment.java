@@ -100,9 +100,13 @@ public class MovieGridActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Movie[] result) {
-            mPosterAdapter.clear();
-            mPosterAdapter.addAll(Arrays.asList(result));
-            mPosterAdapter.notifyDataSetChanged();
+            if (result != null && result.length > 0) {
+                mPosterAdapter.clear();
+                mPosterAdapter.addAll(Arrays.asList(result));
+                mPosterAdapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(getActivity().getApplicationContext(), "Not able to find movies", Toast.LENGTH_SHORT);
+            }
         }
 
         private Movie[] downloadUrl(String url) {
@@ -142,9 +146,7 @@ public class MovieGridActivityFragment extends Fragment {
                 }
                 response = buffer.toString();
             } catch (IOException e) {
-                Log.e("ForecastFragment", "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
-                // to parse it.
+                Log.e(MOVIE_GRID_TAG, "Error ", e);
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -155,7 +157,7 @@ public class MovieGridActivityFragment extends Fragment {
                         reader.close();
                     } catch (final IOException e) {
                         //TODO Handle error case
-                        Log.e("ForecastFragment", "Error closing stream", e);
+                        Log.e(MOVIE_GRID_TAG, "Error closing stream", e);
                     }
                 }
             }
