@@ -1,9 +1,11 @@
 package com.project.luismendez.popularmovies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,7 +31,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -45,6 +50,15 @@ public class MovieGridActivityFragment extends Fragment {
 
     //TODO REMOVE
     private static final String API_KEY = "b94000a39a594e7c14f98f869f804839";
+
+    private static final Map<String, String> SORT_MAP;
+    static {
+        Map<String, String> sortMap = new HashMap<>();
+        sortMap.put("0", "popularity");
+        sortMap.put("1", "vote_average");
+        SORT_MAP = Collections.unmodifiableMap(sortMap);
+    }
+
 
     private PosterAdapter mPosterAdapter;
 
@@ -86,7 +100,14 @@ public class MovieGridActivityFragment extends Fragment {
     public void onStart() {
         super.onStart();
         Uri.Builder uri = Uri.parse(DISCOVER_MOVIES_URL).buildUpon();
-        uri.appendQueryParameter("sort_by", "popularity.desc");
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortPrefValue = sharedPref.getString("movieSort", "0");
+        Log.d("PREFERENCE", sortPrefValue);
+
+        String sortBy = SORT_MAP.get(sortPrefValue);
+
+        uri.appendQueryParameter("sort_by", sortBy + ".desc");
         uri.appendQueryParameter("api_key", API_KEY);
         new FetchMoviesTask().execute(uri.build().toString());
     }
@@ -112,6 +133,7 @@ public class MovieGridActivityFragment extends Fragment {
         private Movie[] downloadUrl(String url) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
+
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String response;
@@ -166,10 +188,8 @@ public class MovieGridActivityFragment extends Fragment {
             try {
                 movies = parseMoviesFromJson(response);
             } catch (JSONException e) {
+                e.printStackTrace();
                 Log.e(MOVIE_GRID_TAG, "Error parsing response data");
-                return null;
-            } catch (ParseException e) {
-                Log.e(MOVIE_GRID_TAG, "Error parsing release data from expected format");
                 return null;
             }
 
@@ -180,12 +200,13 @@ public class MovieGridActivityFragment extends Fragment {
             return movies;
         }
 
-        private Movie[] parseMoviesFromJson(String movieJsonStr) throws JSONException, ParseException {
+        private Movie[] parseMoviesFromJson(String movieJsonStr) throws JSONException {
             JSONObject movieJson = new JSONObject(movieJsonStr);
             JSONArray movieResults = movieJson.getJSONArray("results");
             int movieResultsLength = movieResults.length();
             Movie[] movies = new Movie[movieResultsLength];
             for (int i = 0; i < movieResults.length(); i++) {
+
                 JSONObject movieResult = movieResults.getJSONObject(i);
                 String id = movieResult.getString("id");
                 String title = movieResult.getString("title");
@@ -193,7 +214,12 @@ public class MovieGridActivityFragment extends Fragment {
                 String overview = movieResult.getString("overview");
                 double rating = movieResult.getDouble("vote_average");
                 String releaseDateStr = movieResult.getString("release_date");
-                Date releaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(releaseDateStr);
+                Date releaseDate;
+                try {
+                    releaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(releaseDateStr);
+                } catch (ParseException e) {
+                    releaseDate = null;
+                }
                 movies[i] = new Movie(id, title, posterUrl, overview, rating, releaseDate);
             }
             return movies;

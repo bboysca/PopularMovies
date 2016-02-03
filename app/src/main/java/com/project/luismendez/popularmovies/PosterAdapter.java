@@ -2,6 +2,10 @@ package com.project.luismendez.popularmovies;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -51,10 +55,15 @@ public class PosterAdapter extends ArrayAdapter<Movie> {
             posterHeight = columnWidth / 2;
         }
 
+        //resize placeholder to be same size as poster (since poster size isn't static)
+        Drawable dr = ContextCompat.getDrawable(mContext, R.mipmap.ic_launcher);
+        Bitmap bitmap = ((BitmapDrawable) dr).getBitmap();
+        Drawable d = new BitmapDrawable(mContext.getResources(), Bitmap.createScaledBitmap(bitmap, posterWidth, posterHeight, true));
+        Picasso.with(mContext).setIndicatorsEnabled(true);
         Picasso.with(mContext)
                 .load(MOVIEDB_IMAGE_PATH + mMovies.get(position).getImageUrl())
                 .centerCrop().resize(posterWidth, posterHeight)
-                .placeholder(R.mipmap.ic_launcher)
+                .placeholder(d)
                 .into(imageView2);
         return imageView2;
     }

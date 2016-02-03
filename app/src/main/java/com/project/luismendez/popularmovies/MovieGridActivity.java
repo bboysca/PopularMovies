@@ -1,5 +1,6 @@
 package com.project.luismendez.popularmovies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,15 +24,6 @@ public class MovieGridActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_grid, menu);
-        /*
-        Spinner spinner = (Spinner) menu.findItem(R.id.action_sort).getActionView(); // find the spinner
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.planets_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter); // set the adapter to provide layout of rows and content
-        //spinner.setOnItemSelectedListener(this); // set the listener, to perform actions based on item selection
-        */
         return true;
     }
 
@@ -43,7 +35,8 @@ public class MovieGridActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_sort) {
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 

@@ -29,7 +29,13 @@ public class Movie implements Parcelable {
         mImageUrl = in.readString();
         mOverview = in.readString();
         mRating = in.readDouble();
-        mReleaseDate = new Date(in.readLong());
+        long time = in.readLong();
+        if (time == -1) {
+            mReleaseDate = null;
+        } else {
+            mReleaseDate = new Date(time);
+        }
+
     }
 
     public String getId() {
@@ -77,7 +83,12 @@ public class Movie implements Parcelable {
         out.writeString(mImageUrl);
         out.writeString(mOverview);
         out.writeDouble(mRating);
-        out.writeLong(mReleaseDate.getTime());
+        if (mReleaseDate == null) {
+            out.writeLong(-1);
+        } else {
+            out.writeLong(mReleaseDate.getTime());
+        }
+
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {

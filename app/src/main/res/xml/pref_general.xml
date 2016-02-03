@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ListPreference
+        android:title="Sort By"
+        android:key="movieSort"
+        android:entries="@array/sort_types_array"
+        android:entryValues="@array/sort_values_array"
+        android:defaultValue="0"
+        android:summary="%s">
+    </ListPreference>
+
+</PreferenceScreen>
