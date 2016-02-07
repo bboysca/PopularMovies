@@ -2,6 +2,7 @@ package com.project.luismendez.popularmovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.project.luismendez.popularmovies.com.project.luismendez.popularmovies.model.Movie;
+import com.project.luismendez.popularmovies.model.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,34 +32,22 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * A placeholder fragment containing a simple view.
+ * Fragment for movie grids
  */
 public class MovieGridActivityFragment extends Fragment {
 
-    public static final String MOVIE_PARCEL = "movieParcel";
-
     private static final String DISCOVER_MOVIES_URL = "http://api.themoviedb.org/3/discover/movie";
-    //TODO Find some way to change w185 depending on device size
-    private final static String MOVIEDB_IMAGE_PATH = "http://image.tmdb.org/t/p/w185/";
-    private static final String MOVIE_GRID_TAG = "MovieGrid";
-
-    //TODO REMOVE
+    private static final String URL_PARAM_SORT = "sort_by";
+    private static final String SORT_POPULARITY_VALUE = "popularity";
+    private static final String SORT_RATING_VALUE = "vote_average";
+    private static final String URL_PARAM_API_KEY = "api_key";
+    //TODO FOR PROJECT 2: Research ways to secure API key
     private static final String API_KEY = "b94000a39a594e7c14f98f869f804839";
 
-    private static final Map<String, String> SORT_MAP;
-    static {
-        Map<String, String> sortMap = new HashMap<>();
-        sortMap.put("0", "popularity");
-        sortMap.put("1", "vote_average");
-        SORT_MAP = Collections.unmodifiableMap(sortMap);
-    }
-
+    private static final String MOVIE_GRID_TAG = "MovieGrid";
 
     private PosterAdapter mPosterAdapter;
 
@@ -70,26 +59,18 @@ public class MovieGridActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        View rootView = inflater.inflate(R.layout.fragment_movies, container, false);
-
+        View rootView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
         GridView gridview = (GridView) rootView.findViewById(R.id.movie_grid_view);
 
-        // TODO
-        // references to our images
-        String[] mThumbIds = {
-                MOVIEDB_IMAGE_PATH + "nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg"
-        };
-
         ArrayList<Movie> movieList = new ArrayList<Movie>();
-
-        mPosterAdapter = new PosterAdapter(getActivity(), R.layout.fragment_movies, movieList);
+        mPosterAdapter = new PosterAdapter(getActivity(), R.layout.fragment_movie_grid, movieList);
         gridview.setAdapter(mPosterAdapter);
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 Intent detailIntent = new Intent(getActivity(), MovieDetailsActivity.class)
-                        .putExtra(MOVIE_PARCEL, (Movie) parent.getItemAtPosition(position));
+                        .putExtra(Movie.MOVIE_PARCEL, (Movie) parent.getItemAtPosition(position));
                 startActivity(detailIntent);
             }
         });
@@ -99,16 +80,22 @@ public class MovieGridActivityFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Uri.Builder uri = Uri.parse(DISCOVER_MOVIES_URL).buildUpon();
-
+        Resources resources = getActivity().getResources();
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortPrefValue = sharedPref.getString("movieSort", "0");
-        Log.d("PREFERENCE", sortPrefValue);
+        String sortPrefValue = sharedPref.getString(resources.getString(R.string.settings_sort_key),
+                resources.getString(R.string.settings_sort_default));
 
-        String sortBy = SORT_MAP.get(sortPrefValue);
+        String[] sortValues = resources.getStringArray(R.array.sort_values_array);
+        String sortBy;
+        if (sortValues[0].equals(sortPrefValue)) {
+            sortBy = SORT_POPULARITY_VALUE;
+        } else {
+            sortBy = SORT_RATING_VALUE;
+        }
 
-        uri.appendQueryParameter("sort_by", sortBy + ".desc");
-        uri.appendQueryParameter("api_key", API_KEY);
+        Uri.Builder uri = Uri.parse(DISCOVER_MOVIES_URL).buildUpon();
+        uri.appendQueryParameter(URL_PARAM_SORT, sortBy + ".desc");
+        uri.appendQueryParameter(URL_PARAM_API_KEY, API_KEY);
         new FetchMoviesTask().execute(uri.build().toString());
     }
 
@@ -124,20 +111,19 @@ public class MovieGridActivityFragment extends Fragment {
             if (result != null && result.length > 0) {
                 mPosterAdapter.clear();
                 mPosterAdapter.addAll(Arrays.asList(result));
-                mPosterAdapter.notifyDataSetChanged();
             } else {
-                Toast.makeText(getActivity().getApplicationContext(), "Not able to find movies", Toast.LENGTH_SHORT);
+                String requestFailure =
+                        getActivity().getResources().getString(R.string.grid_discover_failure);
+                Toast.makeText(getActivity(), requestFailure, Toast.LENGTH_SHORT).show();
             }
         }
 
         private Movie[] downloadUrl(String url) {
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
-
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String response;
 
+            //TODO PROJECT 2 : Look into using Volley for making requests
             try {
                 URL requestUrl = new URL(url);
 
@@ -150,7 +136,6 @@ public class MovieGridActivityFragment extends Fragment {
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
-                    // TODO Handle edge case
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -162,13 +147,11 @@ public class MovieGridActivityFragment extends Fragment {
                 }
 
                 if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    // TODO Handle edge case
                     return null;
                 }
                 response = buffer.toString();
             } catch (IOException e) {
-                Log.e(MOVIE_GRID_TAG, "Error ", e);
+                Log.e(MOVIE_GRID_TAG, "I/O Error ", e);
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -178,23 +161,18 @@ public class MovieGridActivityFragment extends Fragment {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        //TODO Handle error case
                         Log.e(MOVIE_GRID_TAG, "Error closing stream", e);
                     }
                 }
             }
 
+            //Parse the response into a Movie array that will be adapted into the grid view
             Movie[] movies;
             try {
                 movies = parseMoviesFromJson(response);
             } catch (JSONException e) {
-                e.printStackTrace();
                 Log.e(MOVIE_GRID_TAG, "Error parsing response data");
                 return null;
-            }
-
-            for (Movie movie : movies) {
-                Log.d(MOVIE_GRID_TAG, movie.toString());
             }
 
             return movies;
@@ -206,7 +184,6 @@ public class MovieGridActivityFragment extends Fragment {
             int movieResultsLength = movieResults.length();
             Movie[] movies = new Movie[movieResultsLength];
             for (int i = 0; i < movieResults.length(); i++) {
-
                 JSONObject movieResult = movieResults.getJSONObject(i);
                 String id = movieResult.getString("id");
                 String title = movieResult.getString("title");

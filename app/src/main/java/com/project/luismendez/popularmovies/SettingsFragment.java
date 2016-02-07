@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * A placeholder fragment containing a simple view.
+ * Settings fragment, this automatically handles a lot of the logic for settings selection
  */
 public class SettingsFragment extends PreferenceFragment {
 
@@ -22,6 +22,4 @@ public class SettingsFragment extends PreferenceFragment {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.pref_general);
     }
-
-
 }

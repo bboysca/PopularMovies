@@ -21,6 +21,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_movies" />
+    <include layout="@layout/content_movie_grid" />
 
 </android.support.design.widget.CoordinatorLayout>

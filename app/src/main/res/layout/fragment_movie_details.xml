@@ -8,16 +8,16 @@
     <TextView
         android:id="@+id/details_title"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="@dimen/details_title_height"
         android:gravity="center_vertical"
-        android:text="Lord of the Rings: Return of the King (2003)"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:background="#0057c8"
-        android:textColor="#ffffff"
-        android:textSize="35dp"
+        android:paddingLeft="@dimen/details_title_padding"
+        android:paddingRight="@dimen/details_title_padding"
+        android:background="@color/detailsBarBackground"
+        android:textColor="@color/detailsTitleText"
+        android:textSize="@dimen/details_title_text_size"
         android:ellipsize="end"
-        android:lines="3" />
+        android:lines="@integer/details_title_lines"
+        tools:text="Movie Title"/>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -25,52 +25,42 @@
         android:layout_below="@id/details_title"
         android:orientation="horizontal">
 
+        <!-- Nested layout in order to split the view into two columns of half width each-->
         <FrameLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:padding="15dp">
+            style="@style/DetailsSplitView"
+            android:padding="@dimen/details_split_padding">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/details_poster"
-                android:contentDescription="movie_poster" />
-
+                android:contentDescription="@string/grid_placeholder_image_desc" />
         </FrameLayout>
 
         <ScrollView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/details_poster">
+            style="@style/DetailsSplitView">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="15dp">
+                android:padding="@dimen/details_split_padding">
 
                 <TextView
                     android:id="@+id/details_rating"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="x / 10"
-                    android:textSize="20dp"
-                    android:layout_marginBottom="5dp" />
-
+                    android:textSize="@dimen/details_rating_text_size"
+                    android:layout_marginBottom="@dimen/details_overview_margin"
+                    tools:text="Rating / 10"/>
 
                 <TextView
                     android:id="@+id/details_overview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/details_rating"
-                    android:text="This is a recollection of the movie. Destroy the ring Frodo bro!"/>
-
+                    tools:text="This is not a very long description"/>
             </LinearLayout>
 
         </ScrollView>
-
     </LinearLayout>
-
 </RelativeLayout>

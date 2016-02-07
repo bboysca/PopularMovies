@@ -5,11 +5,11 @@
     android:layout_height="match_parent">
 
     <ListPreference
-        android:title="Sort By"
-        android:key="movieSort"
+        android:title="@string/settings_sort_title"
+        android:key="@string/settings_sort_key"
         android:entries="@array/sort_types_array"
         android:entryValues="@array/sort_values_array"
-        android:defaultValue="0"
+        android:defaultValue="@string/settings_sort_default"
         android:summary="%s">
     </ListPreference>
 

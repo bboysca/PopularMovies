@@ -2,5 +2,18 @@
     <string name="app_name">PopMovies</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_movie_details">Movie Info</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Movie Grid View -->
+    <string name="grid_discover_failure">Not able to find movies</string>
+    <string name="grid_placeholder_image_desc" translatable="false">Image Description</string>
+
+
+    <!-- Movie Details View -->
+    <string name="details_rating_format">%1$s/10</string>
+
+    <!-- Settings View -->
+    <string name="settings_sort_title">Sort By</string>
+    <string name="settings_sort_key" translatable="false">sortBy</string>
+    <string name="settings_sort_default" translatable="false">0</string>
 </resources>

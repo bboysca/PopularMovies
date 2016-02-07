@@ -1,4 +1,4 @@
-package com.project.luismendez.popularmovies.com.project.luismendez.popularmovies.model;
+package com.project.luismendez.popularmovies.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,7 +6,10 @@ import android.os.Parcelable;
 import java.util.Date;
 
 public class Movie implements Parcelable {
-    private String mId; //in case we have to make extra api calls in the future
+
+    public static final String MOVIE_PARCEL = "movieParcel";
+
+    private String mId; //in case we have to make extra calls about an individual movie
     private String mTitle;
     private String mImageUrl;
     private String mOverview;
@@ -88,7 +91,6 @@ public class Movie implements Parcelable {
         } else {
             out.writeLong(mReleaseDate.getTime());
         }
-
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:numColumns="@integer/grid_columns"
-    android:verticalSpacing="0dp"
-    android:horizontalSpacing="0dp"
+    android:verticalSpacing="@dimen/grid_spacing"
+    android:horizontalSpacing="@dimen/grid_spacing"
     android:stretchMode="columnWidth"
     android:gravity="center" />

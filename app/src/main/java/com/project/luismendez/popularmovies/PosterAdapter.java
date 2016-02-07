@@ -1,7 +1,7 @@
 package com.project.luismendez.popularmovies;
 
 import android.content.Context;
-import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
-import com.project.luismendez.popularmovies.com.project.luismendez.popularmovies.model.Movie;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.project.luismendez.popularmovies.model.Movie;
 
 import java.util.ArrayList;
 
@@ -35,36 +35,34 @@ public class PosterAdapter extends ArrayAdapter<Movie> {
         return mMovies.size();
     }
 
-    // create a new ImageView for each item referenced by the Adapter
+    // Create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView2;
+        ImageView imageView;
         if (convertView == null) {
-            imageView2 = new ImageView(mContext);
+            imageView = new ImageView(mContext);
         } else {
-            imageView2 = (ImageView) convertView;
+            imageView = (ImageView) convertView;
         }
 
-        int columnWidth = mContext.getResources().getDisplayMetrics().widthPixels;
-        int posterWidth;
-        int posterHeight;
-        if (Configuration.ORIENTATION_PORTRAIT == mContext.getResources().getConfiguration().orientation) {
-            posterWidth = columnWidth / 2; //2 columns portrait, 3 columns landscape
-            posterHeight = (3 * columnWidth / 4); //1 * 1.5 poster aspect ratio
-        } else {
-            posterWidth = columnWidth / 3;
-            posterHeight = columnWidth / 2;
-        }
+        //Determine the width/height based on the number of columns
+        Resources resources = mContext.getResources();
+        int columnWidth = resources.getDisplayMetrics().widthPixels;
+        int numColumns = resources.getInteger(R.integer.grid_columns);
+        int posterWidth = columnWidth / numColumns;
+        int posterHeight = (3 * posterWidth / 2);
 
-        //resize placeholder to be same size as poster (since poster size isn't static)
-        Drawable dr = ContextCompat.getDrawable(mContext, R.mipmap.ic_launcher);
-        Bitmap bitmap = ((BitmapDrawable) dr).getBitmap();
-        Drawable d = new BitmapDrawable(mContext.getResources(), Bitmap.createScaledBitmap(bitmap, posterWidth, posterHeight, true));
-        Picasso.with(mContext).setIndicatorsEnabled(true);
-        Picasso.with(mContext)
+        //Resize placeholder to be same size as poster (since poster size isn't static)
+        Drawable placeholder = ContextCompat.getDrawable(mContext, R.drawable.poster_placeholder);
+        Bitmap bitmap = ((BitmapDrawable) placeholder).getBitmap();
+        Drawable scaledPlaceholder = new BitmapDrawable(resources,
+                Bitmap.createScaledBitmap(bitmap, posterWidth, posterHeight, true));
+        Glide.with(mContext)
                 .load(MOVIEDB_IMAGE_PATH + mMovies.get(position).getImageUrl())
-                .centerCrop().resize(posterWidth, posterHeight)
-                .placeholder(d)
-                .into(imageView2);
-        return imageView2;
+                .centerCrop()
+                .override(posterWidth, posterHeight)
+                .placeholder(scaledPlaceholder)
+                .into(imageView);
+        imageView.setContentDescription(mMovies.get(position).getTitle());
+        return imageView;
     }
 }
