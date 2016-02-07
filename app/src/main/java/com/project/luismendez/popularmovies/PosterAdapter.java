@@ -49,7 +49,7 @@ public class PosterAdapter extends ArrayAdapter<Movie> {
         int columnWidth = resources.getDisplayMetrics().widthPixels;
         int numColumns = resources.getInteger(R.integer.grid_columns);
         int posterWidth = columnWidth / numColumns;
-        int posterHeight = (3 * posterWidth / 2);
+        int posterHeight = (3 * posterWidth / 2); // 1.0 x 1.5 poster ratio
 
         //Resize placeholder to be same size as poster (since poster size isn't static)
         Drawable placeholder = ContextCompat.getDrawable(mContext, R.drawable.poster_placeholder);

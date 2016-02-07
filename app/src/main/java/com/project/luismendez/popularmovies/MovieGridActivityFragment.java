@@ -45,7 +45,7 @@ public class MovieGridActivityFragment extends Fragment {
     private static final String SORT_RATING_VALUE = "vote_average";
     private static final String URL_PARAM_API_KEY = "api_key";
     //TODO FOR PROJECT 2: Research ways to secure API key
-    private static final String API_KEY = "b94000a39a594e7c14f98f869f804839";
+    private static final String API_KEY = "{INSERT API KEY HERE}";
 
     private static final String MOVIE_GRID_TAG = "MovieGrid";
 
