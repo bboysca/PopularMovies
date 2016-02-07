@@ -2,6 +2,8 @@
 
 PopMovies App built for a Udacity Android course.
 
+App icon and placeholder image used with permission and created by (my fiance) : [Kristine Barias](http://www.kristinebarias.com)
+
 ## License
 
 The MIT License (MIT)
